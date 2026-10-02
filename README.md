@@ -1,14 +1,14 @@
-# BarnardsLoop
+# Barnard's Loop
 
-A satellite constellation fleet manager to track telemetry status, operational modes, and orbital parameters for mission control operators.
+A satellite fleet manager to track telemetry status, operational modes, and orbital parameters for mission control operators.
 
 ## Data model
 
 | Field | Type | Notes |
 | ----------- | ------------ | ------------------------------------ |
 | isMaintenance | boolean | toggled from the list, default false (Operational / Maintenance) |
-| orbitType | fixed values | LEO, MEO, GEO |
-| missionType | relation | Communications, Earth Observation, Navigation |
+| orbitType | fixed values | LEO, MEO, GEO, HEO, SSO |
+| missionType | relation | Communications, Earth Observation, Navigation, Astronomy |
 | user | relation | the ground operator of the satellite (from week 11) |
 
 Sample data used across all stages:

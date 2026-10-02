@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Barnard's Loop - mockup</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="app-header">
+    <h1>Barnard's Loop</h1>
+    <p>Monitorizarea și managementul flotei de sateliți pe orbite terestre.</p>
+    <p class="app-count">3 sateliți, dintre care 2 operaționali</p>
+  </header>
+
+  <main class="container">
+
+    <section class="panel">
+      <h2>Adaugă satelit</h2>
+      <form class="item-form">
+        <label>
+          Identificator satelit
+          <input type="text" name="titlu" placeholder="Ex: AeroSat-1X" required />
+        </label>
+
+        <label>
+          Regim orbital
+          <select name="eticheta">
+            <option value="leo">LEO (Low Earth Orbit)</option>
+            <option value="meo">MEO (Medium Earth Orbit)</option>
+            <option value="geo">GEO (Geostationary Orbit)</option>
+          </select>
+        </label>
+
+        <button type="submit">Adaugă</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Sateliți pe orbită</h2>
+      
+      <ul class="item-list">
+        <li class="item-card">
+          <div>
+            <h3>AeroSat-1X</h3>
+            <span class="badge badge-leo">LEO</span>
+          </div>
+          <span class="status">Operațional</span>
+        </li>
+
+        <li class="item-card done">
+          <div>
+            <h3>Sentinel-Alpha</h3>
+            <span class="badge badge-meo">MEO</span>
+          </div>
+          <span class="status">Mentenanță</span>
+        </li>
+
+        <li class="item-card">
+          <div>
+            <h3>GeoRelay-01</h3>
+            <span class="badge badge-geo">GEO</span>
+          </div>
+          <span class="status">Operațional</span>
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    Proiect Tehnologii Web
+  </footer>
+
+</body>
+</html>
