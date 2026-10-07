@@ -4,18 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Barnard's Loop - mockup</title>
+  
+  <!-- Font (Orbitron) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+  <!-- Antet -->
   <header class="app-header">
-    <h1>Barnard's Loop</h1>
-    <p>Monitorizarea și managementul flotei de sateliți pe orbite terestre.</p>
-    <p class="app-count">3 sateliți, dintre care 2 operaționali</p>
+    <div class="header-container">
+      
+      <div class="header-left">
+        <picture class="header-logo">
+          <source media="(prefers-color-scheme: dark)" srcset="assets/BL_white-removebg-preview.png" />
+          <img src="assets/BL_black-removebg-preview.png" alt="Barnard's Loop Logo" />
+        </picture>
+
+        <div class="header-brand">
+          <h1>Barnard's Loop</h1>
+          <p>Monitorizarea și managementul flotei de sateliți pe orbite terestre.</p>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <p class="app-count">3 sateliți, dintre care 2 operaționali</p>
+      </div>
+
+    </div>
   </header>
 
+  <!-- Container principal -->
   <main class="container">
 
+    <!-- Panoul stang: Formular -->
     <section class="panel">
       <h2>Adaugă satelit</h2>
       <form class="item-form">
@@ -23,6 +48,19 @@
           Identificator satelit
           <input type="text" name="titlu" placeholder="Ex: AeroSat-1X" required />
         </label>
+
+        <!-- Rand dublu -->
+        <div class="form-row">
+          <label>
+            ID NORAD
+            <input type="number" name="norad" placeholder="Ex: 54891" min="1" required />
+          </label>
+
+          <label>
+            Altitudine (km)
+            <input type="number" name="altitudine" placeholder="Ex: 550" min="100" required />
+          </label>
+        </div>
 
         <label>
           Regim orbital
@@ -35,34 +73,65 @@
           </select>
         </label>
 
+        <label>
+          Rol misiune
+          <select name="misiune">
+            <option value="comunicatii">Comunicații</option>
+            <option value="observare">Observarea Pământului</option>
+            <option value="navigatie">Navigație</option>
+            <option value="stiintific">Cercetare Științifică</option>
+          </select>
+        </label>
+
         <button type="submit">Adaugă</button>
       </form>
     </section>
 
+    <!-- Panoul drept: Lista de sateliti monitorizati -->
     <section class="panel">
       <h2>Sateliți pe orbită</h2>
       
+      <!-- Cand lista e goala: <p class="empty">Nu exista niciun satelit inregistrat.</p> -->
+      
       <ul class="item-list">
         <li class="item-card">
-          <div>
-            <h3>AeroSat-1X</h3>
-            <span class="badge badge-leo">LEO</span>
+          <div class="card-main">
+            <img src="https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=100&auto=format&fit=crop&q=80" alt="AeroSat-1X" class="satellite-thumb" />
+            <div class="satellite-details">
+              <div class="satellite-title-row">
+                <h3>AeroSat-1X</h3>
+                <span class="badge badge-leo">LEO</span>
+              </div>
+              <p class="satellite-meta">NORAD #54891 &middot; Alt: 550 km &middot; Comunicații &middot; Lansat: 2024</p>
+            </div>
           </div>
           <span class="status">Operațional</span>
         </li>
 
         <li class="item-card done">
-          <div>
-            <h3>Sentinel-Alpha</h3>
-            <span class="badge badge-meo">MEO</span>
+          <div class="card-main">
+            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=100&auto=format&fit=crop&q=80" alt="Sentinel-Alpha" class="satellite-thumb" />
+            <div class="satellite-details">
+              <div class="satellite-title-row">
+                <h3>Sentinel-Alpha</h3>
+                <span class="badge badge-meo">MEO</span>
+              </div>
+              <p class="satellite-meta">NORAD #43120 &middot; Alt: 20.200 km &middot; Observare &middot; Lansat: 2021</p>
+            </div>
           </div>
           <span class="status">Mentenanță</span>
         </li>
 
         <li class="item-card">
-          <div>
-            <h3>GeoRelay-01</h3>
-            <span class="badge badge-geo">GEO</span>
+          <div class="card-main">
+            <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=100&auto=format&fit=crop&q=80" alt="GeoRelay-01" class="satellite-thumb" />
+            <div class="satellite-details">
+              <div class="satellite-title-row">
+                <h3>GeoRelay-01</h3>
+                <span class="badge badge-geo">GEO</span>
+              </div>
+              <p class="satellite-meta">NORAD #39845 &middot; Alt: 35.786 km &middot; Navigație &middot; Lansat: 2019</p>
+            </div>
           </div>
           <span class="status">Operațional</span>
         </li>
