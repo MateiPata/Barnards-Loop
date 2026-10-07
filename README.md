@@ -29,6 +29,19 @@ Open `index.html` in a browser. No build step, no server.
 
 Details per stage: see the `ai-log/` folder.
 
+## Verification table (Stage 1)
+
+| ID | Requirement | Where (permalink) | How to check |
+| :--- | :--- | :--- | :--- |
+| S1-R1 | README: description, fields, sample data, how to run | [README.md](https://github.com/MateiPata/Barnards-Loop/blob/1497d6ffe00948e2da58433717b92810d6cbdcb6/README.md?plain=1#L1-L35) | read |
+| S1-R2 | AI usage section | [README.md#ai-usage](https://github.com/MateiPata/Barnards-Loop/blob/1497d6ffe00948e2da58433717b92810d6cbdcb6/README.md?plain=1#L25-L28) | read |
+| S1-R3 | AI log for stage 1 | [ai-log/etapa-01.md](https://github.com/MateiPata/Barnards-Loop/blob/1497d6ffe00948e2da58433717b92810d6cbdcb6/ai-log/stage-01.md?plain=1#L1-L7) | read |
+| S1-R4 | header, form (text + select), 3 cards with own data | [index.html#L18-L105](https://github.com/MateiPata/Barnards-Loop/blob/1497d6ffe00948e2da58433717b92810d6cbdcb6/index.html#L1-L148) | open the page |
+| S1-R5 | finished card looks different | [style.css#L316-L324](https://github.com/MateiPata/Barnards-Loop/blob/1497d6ffe00948e2da58433717b92810d6cbdcb6/style.css#L316-L324) | look at the card (`.done`) |
+| S1-R6 | 2 columns on desktop, 1 under 700px | [style.css#L364-L383](https://github.com/MateiPata/Barnards-Loop/blob/1497d6ffe00948e2da58433717b92810d6cbdcb6/style.css#L364-L383) | resize < 700px |
+| S1-R7 | visible focus, readable dark theme | [style.css#L33-L51](https://github.com/MateiPata/Barnards-Loop/blob/1497d6ffe00948e2da58433717b92810d6cbdcb6/style.css#L33-L51) | Tab; dark mode |
+| S1-R8 | commit "Stage 1" pushed | [Commit Link](https://github.com/MateiPata/Barnards-Loop/commit/1497d6ffe00948e2da58433717b92810d6cbdcb6) | commit history |
+
 ## Status
 - [x] Stage 1: static mockup
 - [ ] Stage 2: data logic in JavaScript
