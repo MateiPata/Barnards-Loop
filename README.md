@@ -42,7 +42,11 @@ Details per stage: see the `ai-log/` folder.
 | S1-R7 | visible focus, readable dark theme | [style.css#L33-L51](https://github.com/MateiPata/Barnards-Loop/blob/1497d6ffe00948e2da58433717b92810d6cbdcb6/style.css#L33-L51) | Tab; dark mode |
 | S1-R8 | commit "Stage 1" pushed | [Commit Link](https://github.com/MateiPata/Barnards-Loop/commit/1497d6ffe00948e2da58433717b92810d6cbdcb6) | commit history |
 
+## Stage 2: data logic
+Plain JavaScript, no DOM. `sateliti.js` holds the array and the functions
+that read and change it. Results are printed in the browser console (F12).
+
 ## Status
 - [x] Stage 1: static mockup
-- [ ] Stage 2: data logic in JavaScript
-- [ ] Stage 3: Vite and React project
+- [x] Stage 2: data logic in JavaScript
+- Stage 3: Vite and React project
