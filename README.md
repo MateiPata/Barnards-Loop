@@ -80,3 +80,21 @@ The app now lives in `frontend/`, built with Vite. The data from stage 2 moved i
 | S3-R7 | commit “Stage 3” pushed | [Commits](../../commits/main) | commit history |
 
 ---
+
+## Stage 4: components
+The list is rendered from the data, through two components:
+- `SatelitList` receives the whole array and renders one card per item
+- `SatelitCard` receives a single item through props and displays it
+
+| ID | Requirement | Where (permalink) | How to check |
+| :--- | :--- | :--- | :--- |
+| S4-R1 | 2+ components in src/components/ | [frontend/src/components/](frontend/src/components/) | open folder |
+| S4-R2 | card receives data through props | [frontend/src/components/SatelitCard.jsx#L21-L157](frontend/src/components/SatelitCard.jsx#L21-L157) | read |
+| S4-R3 | map + key={id}, no console warnings | [frontend/src/components/SatelitList.jsx#L22-L37](frontend/src/components/SatelitList.jsx#L22-L37) | F12, Console |
+| S4-R4 | message for empty list | [frontend/src/components/SatelitList.jsx#L15-L19](frontend/src/components/SatelitList.jsx#L15-L19) | set array to [] |
+| S4-R5 | state changes the card look | [frontend/src/components/SatelitCard.jsx#L37-L43](frontend/src/components/SatelitCard.jsx#L37-L43) | toggle a done flag |
+| S4-R6 | README Stage 4 section + AI log | [README.md](README.md), [ai-log/etapa-04.md](ai-log/etapa-04.md) | read |
+| S4-R7 | commit “Stage 4” pushed | [Commits](../../commits/main) | commit history |
+
+---
+
