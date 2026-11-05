@@ -98,3 +98,16 @@ The list is rendered from the data, through two components:
 
 ---
 
+## Stage 5: local state and events
+The list lives in React state. Checking and deleting work from the page, and the counters in the header follow automatically. A button in the header switches between light and dark mode. Changes are lost on refresh, which is what stage 6 and stage 10 fix.
+
+| ID | Requirement | Where (permalink) | How to check |
+| :--- | :--- | :--- | :--- |
+| S5-R1 | list kept in useState, in App | [frontend/src/App.jsx#L123](frontend/src/App.jsx#L123) | read |
+| S5-R2 | toggling changes state and card look | [frontend/src/App.jsx#L177-L181](frontend/src/App.jsx#L177-L181), [frontend/src/components/SatelitCard.jsx#L55-L59](frontend/src/components/SatelitCard.jsx#L55-L59) | click a checkbox |
+| S5-R3 | delete removes the item | [frontend/src/App.jsx#L183-L189](frontend/src/App.jsx#L183-L189), [frontend/src/components/SatelitCard.jsx#L115-L122](frontend/src/components/SatelitCard.jsx#L115-L122) | click Delete |
+| S5-R4 | header counter derived, not in state | [frontend/src/App.jsx#L295](frontend/src/App.jsx#L295) | toggle, watch header |
+| S5-R5 | immutable updates (no push, splice, assignment) | [frontend/src/App.jsx#L177-L265](frontend/src/App.jsx#L177-L265) | read |
+| S5-R6 | light / dark toggle: state + data-theme on html | [frontend/src/App.jsx#L289-L293](frontend/src/App.jsx#L289-L293), [frontend/src/App.css#L33-L79](frontend/src/App.css#L33-L79) | click the button, both system themes |
+| S5-R7 | no console warnings; README + AI log | [README.md](README.md), [ai-log/etapa-05.md](ai-log/etapa-05.md) | F12, Console |
+| S5-R8 | commit “Stage 5” pushed | [Commits](../../commits/main) | commit history |
