@@ -29,6 +29,9 @@
   --badge-text: #ffffff;
 
   --focus-ring: #e53854;
+
+  --error-bg: #fdf2f8;
+  --error-border: #fbcfe8;
 }
 
 /* ==========================================================
@@ -55,6 +58,9 @@
     --badge-sso-bg: #10b981;
 
     --focus-ring: #fb7185;
+
+    --error-bg: #3b1d2e;
+    --error-border: #6b2a4a;
   }
 }
 
@@ -81,6 +87,9 @@
   --badge-sso-bg: #10b981;
 
   --focus-ring: #fb7185;
+
+  --error-bg: #3b1d2e;
+  --error-border: #6b2a4a; 
 }
 
 /* ==========================================================
@@ -979,4 +988,19 @@ input[name="norad"] {
   .telemetry-specs {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* ==========================================================
+   Stari de incarcare si de eroare pentru cererile API
+   ========================================================== */
+.info {
+  color: var(--muted);
+}
+
+.error {
+  color: var(--danger);
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: 8px;
+  padding: 10px 12px;
 }

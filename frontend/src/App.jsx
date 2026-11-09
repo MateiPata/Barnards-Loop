@@ -1,66 +1,9 @@
 import { useState, useEffect } from "react";
 import SatelitList from "./components/SatelitList.jsx";
 import OrbitGlobe from "./components/OrbitGlobe.jsx";
+import { fetchSateliti } from "./api.js";
 
-// Datele initiale ale flotei de sateliti
-const SATELITI_INITIALI = [
-  {
-    id: 1,
-    nume: "AeroSat-1X",
-    operational: true,
-    orbita: "leo",
-    norad: 54891,
-    altitudine: 550,
-    viteza: 7.58,
-    inclinatie: 53.2,
-    misiune: "internet",
-    model: "Starlink-V2 Bus",
-    operator: "SpaceX",
-    locLansare: "Cape Canaveral SLC-40",
-    anLansare: 2024,
-    decommission: 2031,
-    imagine:
-      "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=120&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 2,
-    nume: "Sentinel-Alpha",
-    operational: false,
-    orbita: "meo",
-    norad: 43120,
-    altitudine: 20200,
-    viteza: 3.87,
-    inclinatie: 56.0,
-    misiune: "observare",
-    model: "Galileo-FOC",
-    operator: "ESA / Copernicus",
-    locLansare: "Kourou ELA-3",
-    anLansare: 2021,
-    decommission: 2030,
-    imagine:
-      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=120&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 3,
-    nume: "GeoRelay-01",
-    operational: true,
-    orbita: "geo",
-    norad: 39845,
-    altitudine: 35786,
-    viteza: 3.07,
-    inclinatie: 8.5,
-    misiune: "positioning",
-    model: "Eurostar-3000",
-    operator: "Eutelsat / NASA",
-    locLansare: "Kennedy LC-39A",
-    anLansare: 2019,
-    decommission: 2034,
-    imagine:
-      "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=120&auto=format&fit=crop&q=80",
-  },
-];
-
-// Lista categoriilor de sateliti după rol
+// Lista categoriilor de sateliti dupa rol
 const TIPURI_SATELITI = [
   { id: "toate", label: "Toate Tipurile" },
   { id: "internet", label: "Internet" },
@@ -116,13 +59,6 @@ function calculeazaPerioadaMin(altKm, velKms) {
   return Number(((2 * Math.PI * r) / (v * 60)).toFixed(1));
 }
 
-// Citirea temei de pornire din sistemul de operare
-function temaInitiala() {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
-
 // Calculul distantei 3D in kilometri intre doi sateliti
 function calculeazaDistanta3DKm(satA, satB, timpSec = 0) {
   if (!satA || !satB) return 0;
@@ -148,8 +84,17 @@ function calculeazaDistanta3DKm(satA, satB, timpSec = 0) {
   return Math.hypot(xB - xA, yB - yA, zB - zA);
 }
 
+// Citirea temei de pornire din sistemul de operare
+function temaInitiala() {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
 export default function App() {
-  const [sateliti, setSateliti] = useState(SATELITI_INITIALI);
+  const [sateliti, setSateliti] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [tema, setTema] = useState(temaInitiala);
   const [meniuActiv, setMeniuActiv] = useState("home");
 
@@ -164,7 +109,7 @@ export default function App() {
   const [filtruStare, setFiltruStare] = useState("toti");
   const [sortare, setSortare] = useState("implicit");
 
-  // State pentru Comparator si pentru lista (Watchlist)
+  // State pentru Comparator si pentru lista Cumul (Watchlist)
   const [compareIds, setCompareIds] = useState([]);
   const [watchlistIds, setWatchlistIds] = useState([]);
   const [doarWatchlist, setDoarWatchlist] = useState(false);
@@ -184,9 +129,30 @@ export default function App() {
   const [decommission, setDecommission] = useState("2032");
   const [inclinatie, setInclinatie] = useState("53.0");
 
+  // Incarcarea datelor de la API la montarea componentei
+  useEffect(() => {
+    let ignore = false;
+
+    async function load() {
+      try {
+        const data = await fetchSateliti();
+        if (!ignore) setSateliti(data);
+      } catch (err) {
+        if (!ignore) setError(err.message);
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    }
+
+    load();
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   // Actualizarea periodica a telemetriei cand simularea live este activa
   useEffect(() => {
-    if (!telemetrieLive) return;
+    if (!telemetrieLive || loading || error) return;
     const interval = setInterval(() => {
       setSecundeSimulare((s) => s + 1.5);
       setSateliti((prev) =>
@@ -203,7 +169,7 @@ export default function App() {
       );
     }, 1500);
     return () => clearInterval(interval);
-  }, [telemetrieLive]);
+  }, [telemetrieLive, loading, error]);
 
   function handleAltitudineChange(val) {
     setAltitudine(val);
@@ -259,7 +225,6 @@ export default function App() {
     setInclinatie("53.0");
   }
 
-  // Adaugarea unui satelit nou sau salvarea modificarilor unui satelit existent
   function handleSubmitFormular(e) {
     e.preventDefault();
     const numeCurat = nume.trim();
@@ -283,7 +248,7 @@ export default function App() {
                 locLansare,
                 anLansare: Number(anLansare) || 2025,
                 decommission: Number(decommission) || 2032,
-                imagine: s.imagine, // Pastreaza poza pe care o avea deja la editare
+                imagine: s.imagine,
               }
             : s
         )
@@ -306,7 +271,7 @@ export default function App() {
         locLansare,
         anLansare: Number(anLansare) || 2025,
         decommission: Number(decommission) || 2032,
-        imagine: alegePozaRandom(), // Asigneaza automat o poza random din set
+        imagine: alegePozaRandom(),
       };
 
       setSateliti((prev) => [...prev, nou]);
@@ -314,7 +279,6 @@ export default function App() {
     }
   }
 
-  // Gestionarea satelitilor selectati in Comparator (maxim 2)
   function handleToggleCompare(id) {
     setCompareIds((prev) => {
       if (prev.includes(id)) {
@@ -327,7 +291,6 @@ export default function App() {
     });
   }
 
-  // Gestionarea satelitilor adaugati in Cumul (Watchlist)
   function handleToggleWatchlist(id) {
     setWatchlistIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
@@ -342,7 +305,6 @@ export default function App() {
 
   const operationali = sateliti.filter((s) => s.operational).length;
 
-  // Filtrarea si sortarea listei de sateliti
   const satelitiFiltrati = sateliti
     .filter((s) => {
       if (doarWatchlist && !watchlistIds.includes(s.id)) return false;
@@ -393,7 +355,6 @@ export default function App() {
         )
       : 0;
 
-  // Componenta vizuala pentru Comparatorul de sateliti (afisata atat in Home cat si in Harta/Glob)
   const renderComparator = () => {
     if (satelitiComparati.length === 0) return null;
     return (
@@ -815,7 +776,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Filtre pe Orbite, Tipuri (Types), Stare si Cumul (Watchlist) */}
               <div className="filter-bar">
                 <div className="filter-group">
                   {["toate", "leo", "meo", "geo", "heo", "sso"].map((orb) => (
@@ -838,7 +798,7 @@ export default function App() {
                     className={`filter-chip ${doarWatchlist ? "active" : ""}`}
                     onClick={() => setDoarWatchlist((v) => !v)}
                   >
-                    Watchlist ({watchlistIds.length})
+                    Doar Cumul / Watchlist ({watchlistIds.length})
                   </button>
                   {watchlistIds.length > 0 && (
                     <button
@@ -849,7 +809,7 @@ export default function App() {
                         setDoarWatchlist(false);
                       }}
                     >
-                      Golește Watchlist
+                      Golește Cumul
                     </button>
                   )}
                 </div>
@@ -891,18 +851,30 @@ export default function App() {
                 </div>
               </div>
 
-              <SatelitList
-                sateliti={satelitiFiltrati}
-                onToggle={handleToggle}
-                onDelete={handleDelete}
-                onEdit={handleStartEdit}
-                onCompare={handleToggleCompare}
-                compareIds={compareIds}
-                onToggleWatchlist={handleToggleWatchlist}
-                watchlistIds={watchlistIds}
-                selectedId={selectedId}
-                onSelect={setSelectedId}
-              />
+              {/* Cele trei stari ale cererii HTTP catre API: loading, error si succes */}
+              {loading && (
+                <p className="info">Se încarcă constelația de sateliți...</p>
+              )}
+              {error && (
+                <p className="error">
+                  Nu am putut încărca datele: {error}. Rulează{" "}
+                  <code>npm run api</code>?
+                </p>
+              )}
+              {!loading && !error && (
+                <SatelitList
+                  sateliti={satelitiFiltrati}
+                  onToggle={handleToggle}
+                  onDelete={handleDelete}
+                  onEdit={handleStartEdit}
+                  onCompare={handleToggleCompare}
+                  compareIds={compareIds}
+                  onToggleWatchlist={handleToggleWatchlist}
+                  watchlistIds={watchlistIds}
+                  selectedId={selectedId}
+                  onSelect={setSelectedId}
+                />
+              )}
             </section>
           </div>
         )}
@@ -956,19 +928,30 @@ export default function App() {
               </div>
             </div>
 
-            <OrbitGlobe
-              sateliti={satelitiFiltrati}
-              selectedId={selectedId}
-              onSelectSatelit={setSelectedId}
-              compareIds={compareIds}
-              onCompare={handleToggleCompare}
-              watchlistIds={watchlistIds}
-              onToggleWatchlist={handleToggleWatchlist}
-              doarWatchlist={doarWatchlist}
-              onToggleDoarWatchlist={() => setDoarWatchlist((v) => !v)}
-              tema={tema}
-              telemetrieLive={telemetrieLive}
-            />
+            {loading && (
+              <p className="info">Se încarcă constelația de sateliți...</p>
+            )}
+            {error && (
+              <p className="error">
+                Nu am putut încărca datele: {error}. Rulează{" "}
+                <code>npm run api</code>?
+              </p>
+            )}
+            {!loading && !error && (
+              <OrbitGlobe
+                sateliti={satelitiFiltrati}
+                selectedId={selectedId}
+                onSelectSatelit={setSelectedId}
+                compareIds={compareIds}
+                onCompare={handleToggleCompare}
+                watchlistIds={watchlistIds}
+                onToggleWatchlist={handleToggleWatchlist}
+                doarWatchlist={doarWatchlist}
+                onToggleDoarWatchlist={() => setDoarWatchlist((v) => !v)}
+                tema={tema}
+                telemetrieLive={telemetrieLive}
+              />
+            )}
           </section>
         )}
       </main>

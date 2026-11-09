@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { fetchWorldGeoJSON } from "../api.js";
 
 const ORBIT_COLORS = {
   leo: "#0ea5e9",
@@ -12,15 +13,11 @@ const EARTH_RADIUS_KM = 6371.0;
 
 let cachedWorldData = null;
 
-// Incarcarea geometriei continentelor si tarilor din GeoJSON fara mutatii
+// Incarcarea geometriei continentelor si tarilor prin modulul API
 async function incarcaHartaLumii() {
   if (cachedWorldData) return cachedWorldData;
   try {
-    const res = await fetch(
-      "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"
-    );
-    const data = await res.json();
-
+    const data = await fetchWorldGeoJSON();
     const countries = data.features.flatMap((feat) => {
       const geom = feat.geometry;
       const name = feat.properties?.name || "";
@@ -702,7 +699,7 @@ export default function OrbitGlobe({
             className={`orbit-pill ${doarWatchlist ? "active" : ""}`}
             onClick={onToggleDoarWatchlist}
           >
-            Doar Watchlist ({watchlistIds.length})
+            Doar Cumul / Watchlist ({watchlistIds.length})
           </button>
         </div>
 
@@ -803,7 +800,7 @@ export default function OrbitGlobe({
                         className={`btn-action ${inWatchlist ? "active" : ""}`}
                         onClick={() => onToggleWatchlist(p.id)}
                       >
-                        {inWatchlist ? "În Watchlist" : "+ Watchlist"}
+                        {inWatchlist ? "În Cumul" : "+ Cumul"}
                       </button>
                       <button
                         type="button"

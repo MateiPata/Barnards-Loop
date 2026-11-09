@@ -111,3 +111,23 @@ The list lives in React state. Checking and deleting work from the page, and the
 | S5-R6 | light / dark toggle: state + data-theme on html | [frontend/src/App.jsx#L289-L293](frontend/src/App.jsx#L289-L293), [frontend/src/App.css#L33-L79](frontend/src/App.css#L33-L79) | click the button, both system themes |
 | S5-R7 | no console warnings; README + AI log | [README.md](README.md), [ai-log/etapa-05.md](ai-log/etapa-05.md) | F12, Console |
 | S5-R8 | commit “Stage 5” pushed | [Commits](../../commits/main) | commit history |
+
+---
+
+## Stage 6: data from a mock API
+The list is served by json-server from `db.json`. The app fetches it on load and shows a loading state and an error state.
+
+    npm run api   # terminal 1, http://localhost:3001
+    npm run dev   # terminal 2, http://localhost:5173
+
+| ID | Requirement | Where (permalink) | How to check |
+| :--- | :--- | :--- | :--- |
+| S6-R1 | npm run api starts, route shows JSON | [frontend/package.json](frontend/package.json), [frontend/db.json](frontend/db.json) | open localhost:3001/sateliti |
+| S6-R2 | data no longer in React code | [frontend/src/App.jsx#L86](frontend/src/App.jsx#L86) | read (`useState([])`) |
+| S6-R3 | loading message while waiting | [frontend/src/App.jsx#L661-L663](frontend/src/App.jsx#L661-L663) | --delay 4000 |
+| S6-R4 | error message when API is down | [frontend/src/App.jsx#L664-L669](frontend/src/App.jsx#L664-L669) | stop npm run api, refresh |
+| S6-R5 | fetch only in api.js, URL from env | [frontend/src/api.js#L1-L21](frontend/src/api.js#L1-L21), [frontend/.env.example](frontend/.env.example) | search for fetch |
+| S6-R6 | README Stage 6 section + AI log | [README.md](README.md), [ai-log/etapa-06.md](ai-log/etapa-06.md) | read |
+| S6-R7 | commit “Stage 6” pushed | [Commits](../../commits/main) | commit history |
+
+---
