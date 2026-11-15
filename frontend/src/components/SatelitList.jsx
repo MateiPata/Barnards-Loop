@@ -14,7 +14,9 @@ export default function SatelitList({
 }) {
   if (!sateliti || sateliti.length === 0) {
     return (
-      <p className="empty">Nu există niciun satelit înregistrat pe orbită.</p>
+      <p className="empty" data-testid="empty">
+        Nu există niciun satelit înregistrat pe orbită.
+      </p>
     );
   }
 

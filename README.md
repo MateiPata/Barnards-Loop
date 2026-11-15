@@ -131,3 +131,19 @@ The list is served by json-server from `db.json`. The app fetches it on load and
 | S6-R7 | commit “Stage 6” pushed | [Commits](../../commits/main) | commit history |
 
 ---
+
+## Stage 7: form and validation
+Satellites can be added from the page. The form is controlled and validated, and every change (add, toggle, delete) goes to the API before it shows up in the list.
+
+| ID | Requirement | Where (permalink) | How to check |
+| :--- | :--- | :--- | :--- |
+| S7-R1 | controlled form: value + onChange on every field | [frontend/src/components/SatelitForm.jsx#L37-L295](frontend/src/components/SatelitForm.jsx#L37-L295) | read |
+| S7-R2 | empty title shows an error, nothing is sent | [frontend/src/components/SatelitForm.jsx#L83-L94](frontend/src/components/SatelitForm.jsx#L83-L94) | submit empty, watch Network |
+| S7-R3 | added item shows in the list and survives refresh | [frontend/src/App.jsx#L117-L120](frontend/src/App.jsx#L117-L120), [frontend/src/api.js#L21-L26](frontend/src/api.js#L21-L26) | add, refresh |
+| S7-R4 | toggle and delete survive refresh | [frontend/src/App.jsx#L123-L154](frontend/src/App.jsx#L123-L154) | toggle/delete, refresh |
+| S7-R5 | button disabled while sending, form cleared only on success | [frontend/src/components/SatelitForm.jsx#L96-L143](frontend/src/components/SatelitForm.jsx#L96-L143) | --delay 3000; stop API and submit |
+| S7-R6 | tw.json and the data-testid attributes from table 7.3 | [tw.json](tw.json), [frontend/src/components/SatelitCard.jsx#L47-L129](frontend/src/components/SatelitCard.jsx#L47-L129) | querySelectorAll in the console |
+| S7-R7 | README Stage 7 section + AI log | [README.md](README.md), [ai-log/etapa-07.md](ai-log/etapa-07.md) | read |
+| S7-R8 | commit “Stage 7” pushed | [Commits](../../commits/main) | commit history |
+
+---

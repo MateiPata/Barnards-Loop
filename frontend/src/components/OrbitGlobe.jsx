@@ -654,6 +654,7 @@ export default function OrbitGlobe({
     lastMouse.current = { x: e.clientX, y: e.clientY };
   };
 
+  // Rotirea orizontala a globului in aceeasi directie cu tragerea mouse-ului
   const handleMouseMove = (e) => {
     if (!isDragging.current || modRef.current !== "3d") return;
     const dx = e.clientX - lastMouse.current.x;
@@ -661,7 +662,7 @@ export default function OrbitGlobe({
     lastMouse.current = { x: e.clientX, y: e.clientY };
     rotatieRef.current = {
       x: Math.max(-1.4, Math.min(1.4, rotatieRef.current.x + dy * 0.008)),
-      y: rotatieRef.current.y + dx * 0.008,
+      y: rotatieRef.current.y - dx * 0.008,
     };
   };
 
@@ -699,7 +700,7 @@ export default function OrbitGlobe({
             className={`orbit-pill ${doarWatchlist ? "active" : ""}`}
             onClick={onToggleDoarWatchlist}
           >
-            Doar Cumul / Watchlist ({watchlistIds.length})
+            Watchlist ({watchlistIds.length})
           </button>
         </div>
 
@@ -800,7 +801,7 @@ export default function OrbitGlobe({
                         className={`btn-action ${inWatchlist ? "active" : ""}`}
                         onClick={() => onToggleWatchlist(p.id)}
                       >
-                        {inWatchlist ? "În Cumul" : "+ Cumul"}
+                        {inWatchlist ? "În Watchlist" : "+ Watchlist"}
                       </button>
                       <button
                         type="button"

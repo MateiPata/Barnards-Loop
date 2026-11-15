@@ -3,7 +3,7 @@
     {
       "id": 1,
       "nume": "AeroSat-1X",
-      "operational": true,
+      "mentenanta": false,
       "orbita": "leo",
       "norad": 54891,
       "altitudine": 550,
@@ -20,12 +20,12 @@
     {
       "id": 2,
       "nume": "Sentinel-Alpha",
-      "operational": false,
+      "mentenanta": true,
       "orbita": "meo",
       "norad": 43120,
       "altitudine": 20200,
       "viteza": 3.87,
-      "inclinatie": 56.0,
+      "inclinatie": 56,
       "misiune": "observare",
       "model": "Galileo-FOC",
       "operator": "ESA / Copernicus",
@@ -37,7 +37,7 @@
     {
       "id": 3,
       "nume": "GeoRelay-01",
-      "operational": true,
+      "mentenanta": false,
       "orbita": "geo",
       "norad": 39845,
       "altitudine": 35786,
@@ -54,7 +54,7 @@
     {
       "id": 4,
       "nume": "Helios-SSO-4",
-      "operational": true,
+      "mentenanta": false,
       "orbita": "sso",
       "norad": 58102,
       "altitudine": 780,
@@ -71,7 +71,7 @@
     {
       "id": 5,
       "nume": "Molniya-Tundra-2",
-      "operational": false,
+      "mentenanta": true,
       "orbita": "heo",
       "norad": 41908,
       "altitudine": 18500,

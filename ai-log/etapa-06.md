@@ -3,9 +3,6 @@
 ## Tools
 - Gemini Argon (4.0)
 
-## Conversations
-- <share-link> (Moving satellite data to `frontend/db.json` and handling `useEffect` loading/error states)
-
 ## Key requests
 
 ### 1. Moving hardcoded satellite data to `db.json` and centralizing `fetch` in `src/api.js`

@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import SatelitList from "./components/SatelitList.jsx";
+import SatelitForm from "./components/SatelitForm.jsx";
 import OrbitGlobe from "./components/OrbitGlobe.jsx";
-import { fetchSateliti } from "./api.js";
+import {
+  fetchSateliti,
+  createSatelit,
+  updateSatelit,
+  deleteSatelit,
+} from "./api.js";
 
-// Lista categoriilor de sateliti dupa rol
 const TIPURI_SATELITI = [
   { id: "toate", label: "Toate Tipurile" },
   { id: "internet", label: "Internet" },
@@ -16,7 +21,6 @@ const TIPURI_SATELITI = [
   { id: "custom", label: "Custom" },
 ];
 
-// Coordonatele stelelor de fundal
 const STELE_FUNDAL = Array.from({ length: 42 }, (_, i) => ({
   id: i,
   left: `${(i * 23 + 7) % 98}%`,
@@ -27,39 +31,12 @@ const STELE_FUNDAL = Array.from({ length: 42 }, (_, i) => ({
   duration: `${4 + (i % 5)}s`,
 }));
 
-// Set de imagini pentru asignarea automata la crearea unui satelit
-const POZE_SATELITI = [
-  "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=120&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=120&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=120&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=120&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?w=120&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1581822261290-991b38693d1b?w=120&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1457364887197-9150188c107b?w=120&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=120&auto=format&fit=crop&q=80",
-];
-
-// Selectarea aleatoare a unei imagini din set
-function alegePozaRandom() {
-  const index = Math.floor(Math.random() * POZE_SATELITI.length);
-  return POZE_SATELITI[index];
-}
-
-// Calculul vitezei orbitale Kepler
-function calculeazaVitezaKepler(altKm) {
-  const mu = 398600.4418;
-  const r = 6371.0 + (Number(altKm) || 550);
-  return Number(Math.sqrt(mu / r).toFixed(2));
-}
-
-// Calculul perioadei orbitale in minute
 function calculeazaPerioadaMin(altKm, velKms) {
   const r = 6371.0 + (Number(altKm) || 550);
   const v = Number(velKms) || 7.58;
   return Number(((2 * Math.PI * r) / (v * 60)).toFixed(1));
 }
 
-// Calculul distantei 3D in kilometri intre doi sateliti
 function calculeazaDistanta3DKm(satA, satB, timpSec = 0) {
   if (!satA || !satB) return 0;
   const rA = 6371.0 + (Number(satA.altitudine) || 550);
@@ -84,7 +61,6 @@ function calculeazaDistanta3DKm(satA, satB, timpSec = 0) {
   return Math.hypot(xB - xA, yB - yA, zB - zA);
 }
 
-// Citirea temei de pornire din sistemul de operare
 function temaInitiala() {
   return window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
@@ -102,34 +78,17 @@ export default function App() {
   const [selectedId, setSelectedId] = useState(null);
   const [secundeSimulare, setSecundeSimulare] = useState(0);
 
-  // State pentru filtre, cautare si sortare
   const [cautare, setCautare] = useState("");
   const [filtruOrbita, setFiltruOrbita] = useState("toate");
   const [filtruTip, setFiltruTip] = useState("toate");
   const [filtruStare, setFiltruStare] = useState("toti");
   const [sortare, setSortare] = useState("implicit");
 
-  // State pentru Comparator si pentru lista Cumul (Watchlist)
   const [compareIds, setCompareIds] = useState([]);
   const [watchlistIds, setWatchlistIds] = useState([]);
   const [doarWatchlist, setDoarWatchlist] = useState(false);
+  const [satelitEditat, setSatelitEditat] = useState(null);
 
-  // State pentru formularul de adaugare / editare satelit
-  const [editingId, setEditingId] = useState(null);
-  const [nume, setNume] = useState("");
-  const [norad, setNorad] = useState("");
-  const [altitudine, setAltitudine] = useState("550");
-  const [viteza, setViteza] = useState("7.58");
-  const [orbita, setOrbita] = useState("leo");
-  const [misiune, setMisiune] = useState("internet");
-  const [model, setModel] = useState("Starlink-V2 Bus");
-  const [operator, setOperator] = useState("");
-  const [locLansare, setLocLansare] = useState("Cape Canaveral SLC-40");
-  const [anLansare, setAnLansare] = useState("2025");
-  const [decommission, setDecommission] = useState("2032");
-  const [inclinatie, setInclinatie] = useState("53.0");
-
-  // Incarcarea datelor de la API la montarea componentei
   useEffect(() => {
     let ignore = false;
 
@@ -150,132 +109,50 @@ export default function App() {
     };
   }, []);
 
-  // Actualizarea periodica a telemetriei cand simularea live este activa
   useEffect(() => {
     if (!telemetrieLive || loading || error) return;
     const interval = setInterval(() => {
       setSecundeSimulare((s) => s + 1.5);
-      setSateliti((prev) =>
-        prev.map((s) => {
-          if (!s.operational) return s;
-          const deltaAlt = (Math.random() - 0.5) * 0.2;
-          const deltaVel = (Math.random() - 0.5) * 0.01;
-          return {
-            ...s,
-            altitudine: Number((s.altitudine + deltaAlt).toFixed(1)),
-            viteza: Number((s.viteza + deltaVel).toFixed(2)),
-          };
-        })
-      );
     }, 1500);
     return () => clearInterval(interval);
   }, [telemetrieLive, loading, error]);
 
-  function handleAltitudineChange(val) {
-    setAltitudine(val);
-    if (Number(val) >= 100) {
-      setViteza(String(calculeazaVitezaKepler(val)));
+  async function handleAdd(nou) {
+    const creat = await createSatelit(nou);
+    setSateliti((prev) => [...prev, creat]);
+  }
+
+  async function handleToggle(id) {
+    const sat = sateliti.find((s) => s.id === id);
+    if (!sat) return;
+    try {
+      const actualizat = await updateSatelit(id, {
+        mentenanta: !sat.mentenanta,
+      });
+      setSateliti((prev) =>
+        prev.map((s) => (s.id === id ? actualizat : s))
+      );
+    } catch (err) {
+      setError(err.message);
     }
   }
 
-  function handleToggle(id) {
-    setSateliti((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, operational: !s.operational } : s))
-    );
+  async function handleSaveEdit(id, changes) {
+    const actualizat = await updateSatelit(id, changes);
+    setSateliti((prev) => prev.map((s) => (s.id === id ? actualizat : s)));
+    setSatelitEditat(null);
   }
 
-  function handleDelete(id) {
-    setSateliti((prev) => prev.filter((s) => s.id !== id));
-    if (selectedId === id) setSelectedId(null);
-    if (editingId === id) reseteazaFormular();
-    setCompareIds((prev) => prev.filter((item) => item !== id));
-    setWatchlistIds((prev) => prev.filter((item) => item !== id));
-  }
-
-  function handleStartEdit(sat) {
-    setEditingId(sat.id);
-    setNume(sat.nume);
-    setNorad(String(sat.norad));
-    setAltitudine(String(sat.altitudine));
-    setViteza(String(sat.viteza ?? 7.58));
-    setOrbita(sat.orbita);
-    setMisiune(sat.misiune);
-    setModel(sat.model || "Starlink-V2 Bus");
-    setOperator(sat.operator || "");
-    setLocLansare(sat.locLansare || "Cape Canaveral SLC-40");
-    setAnLansare(String(sat.anLansare || 2024));
-    setDecommission(String(sat.decommission || 2031));
-    setInclinatie(String(sat.inclinatie ?? 53.0));
-    setMeniuActiv("home");
-  }
-
-  function reseteazaFormular() {
-    setEditingId(null);
-    setNume("");
-    setNorad("");
-    setAltitudine("550");
-    setViteza("7.58");
-    setOrbita("leo");
-    setMisiune("internet");
-    setModel("Starlink-V2 Bus");
-    setOperator("");
-    setLocLansare("Cape Canaveral SLC-40");
-    setAnLansare("2025");
-    setDecommission("2032");
-    setInclinatie("53.0");
-  }
-
-  function handleSubmitFormular(e) {
-    e.preventDefault();
-    const numeCurat = nume.trim();
-    if (!numeCurat) return;
-
-    if (editingId !== null) {
-      setSateliti((prev) =>
-        prev.map((s) =>
-          s.id === editingId
-            ? {
-                ...s,
-                nume: numeCurat,
-                orbita,
-                norad: Number(norad) || s.norad,
-                altitudine: Number(altitudine) || 550,
-                viteza: Number(viteza) || calculeazaVitezaKepler(altitudine),
-                inclinatie: Number(inclinatie) || 53.0,
-                misiune,
-                model,
-                operator: operator.trim() || "SpaceX / ESA",
-                locLansare,
-                anLansare: Number(anLansare) || 2025,
-                decommission: Number(decommission) || 2032,
-                imagine: s.imagine,
-              }
-            : s
-        )
-      );
-      reseteazaFormular();
-    } else {
-      const nextId = sateliti.reduce((max, s) => Math.max(max, s.id), 0) + 1;
-      const nou = {
-        id: nextId,
-        nume: numeCurat,
-        operational: true,
-        orbita,
-        norad: Number(norad) || 50000 + nextId,
-        altitudine: Number(altitudine) || 550,
-        viteza: Number(viteza) || calculeazaVitezaKepler(altitudine),
-        inclinatie: Number(inclinatie) || 53.0,
-        misiune,
-        model,
-        operator: operator.trim() || "SpaceX / ESA",
-        locLansare,
-        anLansare: Number(anLansare) || 2025,
-        decommission: Number(decommission) || 2032,
-        imagine: alegePozaRandom(),
-      };
-
-      setSateliti((prev) => [...prev, nou]);
-      reseteazaFormular();
+  async function handleDelete(id) {
+    try {
+      await deleteSatelit(id);
+      setSateliti((prev) => prev.filter((s) => s.id !== id));
+      if (selectedId === id) setSelectedId(null);
+      if (satelitEditat?.id === id) setSatelitEditat(null);
+      setCompareIds((prev) => prev.filter((item) => item !== id));
+      setWatchlistIds((prev) => prev.filter((item) => item !== id));
+    } catch (err) {
+      setError(err.message);
     }
   }
 
@@ -303,7 +180,7 @@ export default function App() {
     document.documentElement.dataset.theme = noua;
   }
 
-  const operationali = sateliti.filter((s) => s.operational).length;
+  const operationali = sateliti.filter((s) => !s.mentenanta).length;
 
   const satelitiFiltrati = sateliti
     .filter((s) => {
@@ -325,8 +202,8 @@ export default function App() {
 
       const potrivireStare =
         filtruStare === "toti" ||
-        (filtruStare === "operationali" && s.operational) ||
-        (filtruStare === "mentenanta" && !s.operational);
+        (filtruStare === "operationali" && !s.mentenanta) ||
+        (filtruStare === "mentenanta" && s.mentenanta);
 
       return (
         potrivireText && potrivireOrbita && potrivireTip && potrivireStare
@@ -501,20 +378,6 @@ export default function App() {
             </div>
 
             <div className="header-brand">
-              <div className="brand-badge-row">
-                <button
-                  type="button"
-                  className={`live-pill ${
-                    telemetrieLive ? "is-live" : "is-paused"
-                  }`}
-                  onClick={() => setTelemetrieLive((v) => !v)}
-                >
-                  <span className="live-dot" />
-                  {telemetrieLive
-                    ? "Simulare Live: PORNITĂ"
-                    : "Simulare Live: OPRITĂ"}
-                </button>
-              </div>
               <h1>Barnard's Loop</h1>
               <p>
                 Monitorizarea și managementul flotei de sateliți pe orbite
@@ -522,37 +385,91 @@ export default function App() {
               </p>
             </div>
           </div>
+        </div>
 
-          <div className="header-right">
+        {/* Bara de sub linia din antet: Stanga (Live + Tab-uri) | Dreapta (Contor + Tema) */}
+        <nav className="app-nav">
+          <div className="nav-left">
+            <button
+              type="button"
+              className={`live-pill ${
+                telemetrieLive ? "is-live" : "is-paused"
+              }`}
+              onClick={() => setTelemetrieLive((v) => !v)}
+              title="Pornește / Oprește simularea în timp real"
+            >
+              <span className="live-dot" />
+              {telemetrieLive ? "Live" : "Pauză"}
+            </button>
+
+            <button
+              type="button"
+              className={`nav-tab ${meniuActiv === "home" ? "active" : ""}`}
+              onClick={() => setMeniuActiv("home")}
+            >
+              Panou Sateliți (Home)
+            </button>
+            <button
+              type="button"
+              className={`nav-tab ${meniuActiv === "globe" ? "active" : ""}`}
+              onClick={() => setMeniuActiv("globe")}
+            >
+              Hartă 2D & Glob 3D
+            </button>
+          </div>
+
+          <div className="nav-right">
             <p className="app-count">
-              {sateliti.length} sateliți, dintre care {operationali}{" "}
-              operaționali
+              {operationali}/{sateliti.length} operaționali
             </p>
             <button
               className="theme-toggle"
               onClick={handleTema}
               aria-pressed={tema === "dark"}
+              aria-label={tema === "dark" ? "Mod luminos" : "Mod întunecat"}
+              title={
+                tema === "dark"
+                  ? "Treci pe Mod luminos"
+                  : "Treci pe Mod întunecat"
+              }
             >
-              {tema === "dark" ? "Mod luminos" : "Mod întunecat"}
+              {tema === "dark" ? (
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              ) : (
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              )}
             </button>
           </div>
-        </div>
-
-        <nav className="app-nav">
-          <button
-            type="button"
-            className={`nav-tab ${meniuActiv === "home" ? "active" : ""}`}
-            onClick={() => setMeniuActiv("home")}
-          >
-            Panou Sateliți (Home)
-          </button>
-          <button
-            type="button"
-            className={`nav-tab ${meniuActiv === "globe" ? "active" : ""}`}
-            onClick={() => setMeniuActiv("globe")}
-          >
-            Hartă 2D & Glob 3D
-          </button>
         </nav>
       </header>
 
@@ -561,179 +478,16 @@ export default function App() {
           <div className="workspace-grid">
             <section className="panel">
               <h2>
-                {editingId !== null
-                  ? `Editează satelit (#${editingId})`
+                {satelitEditat
+                  ? `Editează satelit (#${satelitEditat.id})`
                   : "Adaugă satelit"}
               </h2>
-              <form className="item-form" onSubmit={handleSubmitFormular}>
-                <label>
-                  Identificator satelit
-                  <input
-                    type="text"
-                    name="titlu"
-                    placeholder="Ex: AeroSat-1X"
-                    value={nume}
-                    onChange={(e) => setNume(e.target.value)}
-                    required
-                  />
-                </label>
-
-                <div className="form-row">
-                  <label>
-                    ID NORAD
-                    <input
-                      type="number"
-                      name="norad"
-                      placeholder="Ex: 54891"
-                      min="1"
-                      value={norad}
-                      onChange={(e) => setNorad(e.target.value)}
-                      required
-                    />
-                  </label>
-
-                  <label>
-                    Altitudine (km)
-                    <input
-                      type="number"
-                      name="altitudine"
-                      placeholder="Ex: 550"
-                      min="100"
-                      value={altitudine}
-                      onChange={(e) => handleAltitudineChange(e.target.value)}
-                      required
-                    />
-                  </label>
-                </div>
-
-                <div className="form-row">
-                  <label>
-                    Viteză Orbitală (km/s)
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={viteza}
-                      onChange={(e) => setViteza(e.target.value)}
-                      required
-                    />
-                  </label>
-
-                  <label>
-                    Înclinație (&deg;)
-                    <input
-                      type="number"
-                      step="0.1"
-                      value={inclinatie}
-                      onChange={(e) => setInclinatie(e.target.value)}
-                    />
-                  </label>
-                </div>
-
-                <div className="form-row">
-                  <label>
-                    Regim orbital
-                    <select
-                      name="eticheta"
-                      value={orbita}
-                      onChange={(e) => setOrbita(e.target.value)}
-                    >
-                      <option value="leo">LEO (Low Earth)</option>
-                      <option value="meo">MEO (Medium Earth)</option>
-                      <option value="geo">GEO (Geostationary)</option>
-                      <option value="heo">HEO (Highly Elliptical)</option>
-                      <option value="sso">SSO (Sun-Sync)</option>
-                    </select>
-                  </label>
-
-                  <label>
-                    Tip Satelit (Types)
-                    <select
-                      name="misiune"
-                      value={misiune}
-                      onChange={(e) => setMisiune(e.target.value)}
-                    >
-                      <option value="internet">Internet</option>
-                      <option value="comunicatii">Communications</option>
-                      <option value="positioning">Positioning</option>
-                      <option value="observare">Earth Imaging</option>
-                      <option value="weather">Weather</option>
-                      <option value="stiintific">Science</option>
-                      <option value="iot">IoT</option>
-                      <option value="custom">Custom</option>
-                    </select>
-                  </label>
-                </div>
-
-                <div className="form-row">
-                  <label>
-                    Model satelit
-                    <select
-                      value={model}
-                      onChange={(e) => setModel(e.target.value)}
-                    >
-                      <option value="Starlink-V2 Bus">Starlink-V2 Bus</option>
-                      <option value="Galileo-FOC">Galileo-FOC</option>
-                      <option value="Eurostar-3000">Eurostar-3000</option>
-                      <option value="CubeSat-6U">CubeSat-6U</option>
-                    </select>
-                  </label>
-
-                  <label>
-                    Deținător / Operator
-                    <input
-                      type="text"
-                      placeholder="Ex: SpaceX / ESA"
-                      value={operator}
-                      onChange={(e) => setOperator(e.target.value)}
-                    />
-                  </label>
-                </div>
-
-                <div className="form-row">
-                  <label>
-                    Locul lansării
-                    <select
-                      value={locLansare}
-                      onChange={(e) => setLocLansare(e.target.value)}
-                    >
-                      <option value="Cape Canaveral SLC-40">
-                        Cape Canaveral SLC-40
-                      </option>
-                      <option value="Kennedy LC-39A">Kennedy LC-39A</option>
-                      <option value="Kourou ELA-3">Kourou ELA-3</option>
-                      <option value="Vandenberg SLC-4E">
-                        Vandenberg SLC-4E
-                      </option>
-                    </select>
-                  </label>
-
-                  <label>
-                    An dezafectare (EOL)
-                    <input
-                      type="number"
-                      value={decommission}
-                      onChange={(e) => setDecommission(e.target.value)}
-                    />
-                  </label>
-                </div>
-
-                <div className="form-buttons">
-                  <button type="submit">
-                    {editingId !== null
-                      ? "Salvează modificările"
-                      : "Adaugă satelit"}
-                  </button>
-                  {editingId !== null && (
-                    <button
-                      type="button"
-                      className="btn-cancel"
-                      onClick={reseteazaFormular}
-                    >
-                      Anulează
-                    </button>
-                  )}
-                </div>
-              </form>
+              <SatelitForm
+                onAdd={handleAdd}
+                satelitEditat={satelitEditat}
+                onSaveEdit={handleSaveEdit}
+                onCancelEdit={() => setSatelitEditat(null)}
+              />
             </section>
 
             <section className="panel">
@@ -798,7 +552,7 @@ export default function App() {
                     className={`filter-chip ${doarWatchlist ? "active" : ""}`}
                     onClick={() => setDoarWatchlist((v) => !v)}
                   >
-                    Doar Cumul / Watchlist ({watchlistIds.length})
+                    Watchlist ({watchlistIds.length})
                   </button>
                   {watchlistIds.length > 0 && (
                     <button
@@ -809,7 +563,7 @@ export default function App() {
                         setDoarWatchlist(false);
                       }}
                     >
-                      Golește Cumul
+                      Golește Watchlist
                     </button>
                   )}
                 </div>
@@ -851,22 +605,22 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Cele trei stari ale cererii HTTP catre API: loading, error si succes */}
               {loading && (
-                <p className="info">Se încarcă constelația de sateliți...</p>
-              )}
-              {error && (
-                <p className="error">
-                  Nu am putut încărca datele: {error}. Rulează{" "}
-                  <code>npm run api</code>?
+                <p className="info" data-testid="loading">
+                  Se încarcă constelația de sateliți...
                 </p>
               )}
-              {!loading && !error && (
+              {error && (
+                <p className="error" data-testid="error">
+                  {error}
+                </p>
+              )}
+              {!loading && (
                 <SatelitList
                   sateliti={satelitiFiltrati}
                   onToggle={handleToggle}
                   onDelete={handleDelete}
-                  onEdit={handleStartEdit}
+                  onEdit={setSatelitEditat}
                   onCompare={handleToggleCompare}
                   compareIds={compareIds}
                   onToggleWatchlist={handleToggleWatchlist}
@@ -929,17 +683,21 @@ export default function App() {
             </div>
 
             {loading && (
-              <p className="info">Se încarcă constelația de sateliți...</p>
-            )}
-            {error && (
-              <p className="error">
-                Nu am putut încărca datele: {error}. Rulează{" "}
-                <code>npm run api</code>?
+              <p className="info" data-testid="loading">
+                Se încarcă constelația de sateliți...
               </p>
             )}
-            {!loading && !error && (
+            {error && (
+              <p className="error" data-testid="error">
+                {error}
+              </p>
+            )}
+            {!loading && (
               <OrbitGlobe
-                sateliti={satelitiFiltrati}
+                sateliti={satelitiFiltrati.map((s) => ({
+                  ...s,
+                  operational: !s.mentenanta,
+                }))}
                 selectedId={selectedId}
                 onSelectSatelit={setSelectedId}
                 compareIds={compareIds}
