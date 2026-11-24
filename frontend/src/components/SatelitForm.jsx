@@ -1,16 +1,9 @@
-import { useState, useEffect } from "react";
-
-const ORBITE = [
-  { value: "leo", label: "LEO (Low Earth)" },
-  { value: "meo", label: "MEO (Medium Earth)" },
-  { value: "geo", label: "GEO (Geostationary)" },
-  { value: "heo", label: "HEO (Highly Elliptical)" },
-  { value: "sso", label: "SSO (Sun-Sync)" },
-];
+import { useState } from "react";
+import { ORBITE } from "../constants.js";
+import styles from "./SatelitForm.module.css";
 
 const NUME_MAX = 100;
 
-// Set de imagini pentru asignarea aleatoare la crearea unui satelit nou
 const POZE_SATELITI = [
   "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=120&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=120&auto=format&fit=crop&q=80",
@@ -33,46 +26,34 @@ function calculeazaVitezaKepler(altKm) {
   return Number(Math.sqrt(mu / r).toFixed(2));
 }
 
-// Formular controlat pentru adaugarea si editarea unui satelit
 export default function SatelitForm({
   onAdd,
   satelitEditat,
   onSaveEdit,
   onCancelEdit,
 }) {
-  const [nume, setNume] = useState("");
-  const [orbita, setOrbita] = useState("leo");
-  const [norad, setNorad] = useState("54900");
-  const [altitudine, setAltitudine] = useState("550");
-  const [viteza, setViteza] = useState("7.58");
-  const [inclinatie, setInclinatie] = useState("53.0");
-  const [misiune, setMisiune] = useState("internet");
-  const [model, setModel] = useState("Starlink-V2 Bus");
-  const [operator, setOperator] = useState("SpaceX");
-  const [locLansare, setLocLansare] = useState("Cape Canaveral SLC-40");
-  const [anLansare, setAnLansare] = useState("2025");
-  const [decommission, setDecommission] = useState("2032");
+  const [nume, setNume] = useState(satelitEditat?.nume || "");
+  const [orbita, setOrbita] = useState(satelitEditat?.orbita || "leo");
+  const [norad, setNorad] = useState(String(satelitEditat?.norad || 54900));
+  const [altitudine, setAltitudine] = useState(
+    String(satelitEditat?.altitudine || 550)
+  );
+  const [viteza, setViteza] = useState(String(satelitEditat?.viteza ?? 7.58));
+  const [inclinatie, setInclinatie] = useState(
+    String(satelitEditat?.inclinatie ?? 53.0)
+  );
+  const [misiune, setMisiune] = useState(satelitEditat?.misiune || "internet");
+  const [model, setModel] = useState(satelitEditat?.model || "Starlink-V2 Bus");
+  const [operator, setOperator] = useState(satelitEditat?.operator || "SpaceX");
+  const [locLansare, setLocLansare] = useState(
+    satelitEditat?.locLansare || "Cape Canaveral SLC-40"
+  );
+  const [decommission, setDecommission] = useState(
+    String(satelitEditat?.decommission || 2032)
+  );
 
   const [eroare, setEroare] = useState("");
   const [trimite, setTrimite] = useState(false);
-
-  useEffect(() => {
-    if (satelitEditat) {
-      setNume(satelitEditat.nume || "");
-      setOrbita(satelitEditat.orbita || "leo");
-      setNorad(String(satelitEditat.norad || 54900));
-      setAltitudine(String(satelitEditat.altitudine || 550));
-      setViteza(String(satelitEditat.viteza ?? 7.58));
-      setInclinatie(String(satelitEditat.inclinatie ?? 53.0));
-      setMisiune(satelitEditat.misiune || "internet");
-      setModel(satelitEditat.model || "Starlink-V2 Bus");
-      setOperator(satelitEditat.operator || "SpaceX");
-      setLocLansare(satelitEditat.locLansare || "Cape Canaveral SLC-40");
-      setAnLansare(String(satelitEditat.anLansare || 2024));
-      setDecommission(String(satelitEditat.decommission || 2031));
-      setEroare("");
-    }
-  }, [satelitEditat]);
 
   function handleAltitudineChange(val) {
     setAltitudine(val);
@@ -118,7 +99,7 @@ export default function SatelitForm({
         model,
         operator: operator.trim() || "SpaceX / ESA",
         locLansare,
-        anLansare: Number(anLansare) || 2025,
+        anLansare: Number(satelitEditat?.anLansare) || 2025,
         decommission: Number(decommission) || 2032,
         imagine: satelitEditat ? satelitEditat.imagine : alegePozaRandom(),
       };
@@ -142,7 +123,7 @@ export default function SatelitForm({
 
   return (
     <form
-      className="item-form task-form"
+      className={styles.form}
       onSubmit={handleSubmit}
       noValidate
       data-testid="form"
@@ -161,7 +142,7 @@ export default function SatelitForm({
         />
       </label>
 
-      <div className="form-row">
+      <div className={styles.row}>
         <label>
           Regim orbital
           <select
@@ -191,7 +172,7 @@ export default function SatelitForm({
         </label>
       </div>
 
-      <div className="form-row">
+      <div className={styles.row}>
         <label>
           ID NORAD
           <input
@@ -214,7 +195,7 @@ export default function SatelitForm({
         </label>
       </div>
 
-      <div className="form-row">
+      <div className={styles.row}>
         <label>
           Tip Satelit (Types)
           <select
@@ -244,7 +225,7 @@ export default function SatelitForm({
         </label>
       </div>
 
-      <div className="form-row">
+      <div className={styles.row}>
         <label>
           Model satelit
           <select value={model} onChange={(e) => setModel(e.target.value)}>
@@ -266,7 +247,7 @@ export default function SatelitForm({
         </label>
       </div>
 
-      <div className="form-row">
+      <div className={styles.row}>
         <label>
           Locul lansării
           <select
@@ -296,9 +277,10 @@ export default function SatelitForm({
         </p>
       )}
 
-      <div className="form-buttons">
+      <div className={styles.buttons}>
         <button
           type="submit"
+          className="btn"
           disabled={trimite}
           data-testid="form-submit"
         >
@@ -311,7 +293,7 @@ export default function SatelitForm({
         {satelitEditat && (
           <button
             type="button"
-            className="btn-cancel"
+            className={styles.btnCancel}
             onClick={onCancelEdit}
           >
             Anulează

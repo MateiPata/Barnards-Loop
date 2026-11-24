@@ -1,0 +1,109 @@
+.grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+.summary {
+  margin: -8px 0 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.listHeaderBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.searchAndSort {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.searchBox {
+  flex: 1;
+  min-width: 280px;
+  max-width: 380px;
+}
+
+.searchBox input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: var(--card-elevated);
+  color: var(--text);
+  font-size: 0.84rem;
+  outline: none;
+}
+
+.searchBox input:focus {
+  border-color: var(--accent);
+}
+
+.sortSelect {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: var(--card-elevated);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.sortSelect:focus {
+  border-color: var(--accent);
+}
+
+.filterBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.filterGroup {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+
+.filterChip {
+  background: var(--card-elevated);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filterChip:hover,
+.active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

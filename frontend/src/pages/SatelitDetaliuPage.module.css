@@ -1,0 +1,50 @@
+.detail {
+  max-width: 640px;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.done {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px 20px;
+  margin: 0;
+}
+
+.fields dt {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.fields dd {
+  margin: 0;
+}

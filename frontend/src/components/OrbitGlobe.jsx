@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchWorldGeoJSON } from "../api.js";
+import styles from "./OrbitGlobe.module.css";
 
 const ORBIT_COLORS = {
   leo: "#0ea5e9",
@@ -671,33 +672,37 @@ export default function OrbitGlobe({
   };
 
   return (
-    <div className="orbital-visualizer">
-      <div className="visualizer-toolbar">
-        <div className="view-mode-switch">
+    <div className={styles.visualizer}>
+      <div className={styles.toolbar}>
+        <div className={styles.controls}>
           <button
             type="button"
-            className={`orbit-pill ${modAfisare === "3d" ? "active" : ""}`}
+            className={`${styles.pill} ${
+              modAfisare === "3d" ? styles.active : ""
+            }`}
             onClick={() => setModAfisare("3d")}
           >
-            Glob 3D (Scară Reală & Zi/Noapte)
+            Glob 3D (Scară Reală &amp; Zi/Noapte)
           </button>
           <button
             type="button"
-            className={`orbit-pill ${modAfisare === "2d" ? "active" : ""}`}
+            className={`${styles.pill} ${
+              modAfisare === "2d" ? styles.active : ""
+            }`}
             onClick={() => setModAfisare("2d")}
           >
-            Hartă 2D (Terminator Solar & Regiuni)
+            Hartă 2D (Terminator Solar &amp; Regiuni)
           </button>
           <button
             type="button"
-            className={`orbit-pill ${arataOrbite ? "active" : ""}`}
+            className={`${styles.pill} ${arataOrbite ? styles.active : ""}`}
             onClick={() => setArataOrbite((v) => !v)}
           >
             Linii Orbită: {arataOrbite ? "ON" : "OFF"}
           </button>
           <button
             type="button"
-            className={`orbit-pill ${doarWatchlist ? "active" : ""}`}
+            className={`${styles.pill} ${doarWatchlist ? styles.active : ""}`}
             onClick={onToggleDoarWatchlist}
           >
             Watchlist ({watchlistIds.length})
@@ -705,11 +710,13 @@ export default function OrbitGlobe({
         </div>
 
         {modAfisare === "3d" && (
-          <div className="zoom-controls">
-            <span className="zoom-label">Scară Zoom: {zoom.toFixed(2)}x</span>
+          <div className={styles.controls}>
+            <span className={styles.zoomLabel}>
+              Scară Zoom: {zoom.toFixed(2)}x
+            </span>
             <button
               type="button"
-              className="orbit-pill"
+              className={styles.pill}
               onClick={() =>
                 setZoom((z) => Number(Math.min(3.5, z * 1.25).toFixed(2)))
               }
@@ -718,7 +725,7 @@ export default function OrbitGlobe({
             </button>
             <button
               type="button"
-              className="orbit-pill"
+              className={styles.pill}
               onClick={() =>
                 setZoom((z) => Number(Math.max(0.18, z * 0.8).toFixed(2)))
               }
@@ -727,14 +734,14 @@ export default function OrbitGlobe({
             </button>
             <button
               type="button"
-              className="orbit-pill"
+              className={styles.pill}
               onClick={() => setZoom(0.28)}
             >
               Vedere GEO (0.28x)
             </button>
             <button
               type="button"
-              className="orbit-pill"
+              className={styles.pill}
               onClick={() => setZoom(1.0)}
             >
               Vedere LEO (1.0x)
@@ -743,7 +750,7 @@ export default function OrbitGlobe({
         )}
       </div>
 
-      <div className="globe-canvas-box">
+      <div className={styles.canvasBox}>
         <canvas
           ref={canvasRef}
           width={920}
@@ -755,8 +762,8 @@ export default function OrbitGlobe({
         />
       </div>
 
-      <div className="groundtrack-table-wrap">
-        <table className="groundtrack-table">
+      <div className={styles.tableWrap}>
+        <table className={styles.table}>
           <thead>
             <tr>
               <th>Satelit</th>
@@ -776,7 +783,7 @@ export default function OrbitGlobe({
               return (
                 <tr
                   key={p.id}
-                  className={selectedId === p.id ? "row-selected" : ""}
+                  className={selectedId === p.id ? styles.rowSelected : ""}
                   onClick={() =>
                     onSelectSatelit(selectedId === p.id ? null : p.id)
                   }
@@ -792,10 +799,10 @@ export default function OrbitGlobe({
                     {p.lat}&deg;, {p.lon}&deg;
                   </td>
                   <td>
-                    <span className="region-badge">{p.regiune}</span>
+                    <span className={styles.regionBadge}>{p.regiune}</span>
                   </td>
                   <td onClick={(e) => e.stopPropagation()}>
-                    <div className="table-actions">
+                    <div className={styles.tableActions}>
                       <button
                         type="button"
                         className={`btn-action ${inWatchlist ? "active" : ""}`}

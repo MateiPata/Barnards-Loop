@@ -1,0 +1,240 @@
+/* Stiluri globale: variabile, elemente de baza, clase comune.
+   Stilurile specifice fiecarei componente sunt in fisiere *.module.css */
+
+* {
+  box-sizing: border-box;
+}
+
+/* ==========================================================
+   Variabile pentru tema luminoasa
+   ========================================================== */
+:root {
+  color-scheme: light;
+  --bg: #f8f9fb;
+  --bg-radial: rgba(229, 56, 84, 0.06);
+  --card: #ffffff;
+  --card-elevated: #f3f4f8;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+
+  --accent: #e53854;
+  --accent-dark: #be1e3a;
+  --accent-soft: #fff1f3;
+  --danger: #dc2626;
+  --online: #10b981;
+
+  --badge-leo-bg: #0284c7;
+  --badge-meo-bg: #7c3aed;
+  --badge-geo-bg: #d97706;
+  --badge-heo-bg: #dc2626;
+  --badge-sso-bg: #059669;
+  --badge-text: #ffffff;
+
+  --focus-ring: #e53854;
+
+  --error-bg: #fdf2f8;
+  --error-border: #fbcfe8;
+}
+
+/* ==========================================================
+   Variabile pentru tema intunecata din sistem
+   ========================================================== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #07080c;
+    --bg-radial: rgba(229, 56, 84, 0.12);
+    --card: #111218;
+    --card-elevated: #181922;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --border: #232530;
+    --accent-soft: #220e15;
+    --danger: #ef4444;
+    --online: #34d399;
+
+    --badge-leo-bg: #0ea5e9;
+    --badge-meo-bg: #8b5cf6;
+    --badge-geo-bg: #f59e0b;
+    --badge-heo-bg: #ef4444;
+    --badge-sso-bg: #10b981;
+
+    --focus-ring: #fb7185;
+
+    --error-bg: #3b1d2e;
+    --error-border: #6b2a4a;
+  }
+}
+
+/* ==========================================================
+   Variabile pentru tema intunecata selectata manual
+   ========================================================== */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #07080c;
+  --bg-radial: rgba(229, 56, 84, 0.12);
+  --card: #111218;
+  --card-elevated: #181922;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --border: #232530;
+  --accent-soft: #220e15;
+  --danger: #ef4444;
+  --online: #34d399;
+
+  --badge-leo-bg: #0ea5e9;
+  --badge-meo-bg: #8b5cf6;
+  --badge-geo-bg: #f59e0b;
+  --badge-heo-bg: #ef4444;
+  --badge-sso-bg: #10b981;
+
+  --focus-ring: #fb7185;
+
+  --error-bg: #3b1d2e;
+  --error-border: #6b2a4a;
+}
+
+html,
+body {
+  min-height: 100vh;
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg);
+  background-image: radial-gradient(
+    circle at 50% 0%,
+    var(--bg-radial) 0%,
+    transparent 65%
+  );
+  color: var(--text);
+  line-height: 1.5;
+}
+
+a {
+  color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.panel {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.panel h2 {
+  margin: 0 0 14px 0;
+  font-size: 1.2rem;
+  letter-spacing: -0.3px;
+  color: var(--text);
+}
+
+.accent-text {
+  color: var(--accent);
+}
+
+.info {
+  color: var(--muted);
+}
+
+.empty {
+  color: var(--muted);
+  font-style: italic;
+  margin: 12px 0;
+}
+
+.error {
+  color: var(--danger);
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.btn {
+  background-color: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn:hover {
+  background-color: var(--accent-dark);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-action {
+  border: 1px solid var(--border);
+  background: var(--card-elevated);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-action:hover,
+.btn-action.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.btn-danger {
+  border: 1px solid var(--danger);
+  background: transparent;
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 5px 11px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-danger:hover {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--badge-text);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  letter-spacing: 0.5px;
+}
+
+.badge-leo { background-color: var(--badge-leo-bg); }
+.badge-meo { background-color: var(--badge-meo-bg); }
+.badge-geo { background-color: var(--badge-geo-bg); }
+.badge-heo { background-color: var(--badge-heo-bg); }
+.badge-sso { background-color: var(--badge-sso-bg); }

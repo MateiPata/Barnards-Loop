@@ -1,4 +1,5 @@
 import SatelitCard from "./SatelitCard.jsx";
+import styles from "./SatelitList.module.css";
 
 export default function SatelitList({
   sateliti,
@@ -12,16 +13,16 @@ export default function SatelitList({
   selectedId,
   onSelect,
 }) {
-  if (!sateliti || sateliti.length === 0) {
+  if (sateliti.length === 0) {
     return (
       <p className="empty" data-testid="empty">
-        Nu există niciun satelit înregistrat pe orbită.
+        Nu există niciun satelit care să corespundă criteriilor.
       </p>
     );
   }
 
   return (
-    <ul className="item-list">
+    <ul className={styles.list}>
       {sateliti.map((satelit) => (
         <SatelitCard
           key={satelit.id}

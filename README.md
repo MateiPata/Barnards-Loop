@@ -147,3 +147,19 @@ Satellites can be added from the page. The form is controlled and validated, and
 | S7-R8 | commit “Stage 7” pushed | [Commits](../../commits/main) | commit history |
 
 ---
+
+## Stage 8: routing and detail page
+Multi-page navigation behind React Router with a shared `Layout`: the satellite list (`/`), a detail page at `/sateliti/:id`, the 2D/3D orbital visualizer (`/harta`), an about page (`/despre`), and a 404 page (`*`). Component styles moved to CSS Modules, keeping only theme variables and shared classes in `index.css`.
+
+| ID | Requirement | Where (permalink) | How to check |
+| :--- | :--- | :--- | :--- |
+| S8-R1 | header navigation changes page without reload | [frontend/src/App.jsx](frontend/src/App.jsx), [frontend/src/components/Layout.jsx#L70-L96](frontend/src/components/Layout.jsx#L70-L96) | click links, watch Network |
+| S8-R2 | click on an item opens its detail page | [frontend/src/components/SatelitCard.jsx#L66-L72](frontend/src/components/SatelitCard.jsx#L66-L72), [frontend/src/pages/SatelitDetaliuPage.jsx](frontend/src/pages/SatelitDetaliuPage.jsx) | click a satellite name |
+| S8-R3 | refresh on the detail URL works; missing id shows an error | [frontend/src/pages/SatelitDetaliuPage.jsx#L13-L49](frontend/src/pages/SatelitDetaliuPage.jsx#L13-L49) | refresh `/sateliti/1`, open `/sateliti/999` |
+| S8-R4 | unknown URL shows the app 404 page | [frontend/src/App.jsx#L47](frontend/src/App.jsx#L47), [frontend/src/pages/NotFoundPage.jsx](frontend/src/pages/NotFoundPage.jsx) | open `/ceva` |
+| S8-R5 | each component has its `.module.css`; `index.css` only shared styles | [frontend/src/components/](frontend/src/components/), [frontend/src/pages/](frontend/src/pages/), [frontend/src/index.css](frontend/src/index.css) | read |
+| S8-R6 | `data-testid` attributes from tables 7.3 and 8.2; detail route `/sateliti/:id` | [frontend/src/components/Layout.jsx](frontend/src/components/Layout.jsx), [frontend/src/components/SatelitCard.jsx](frontend/src/components/SatelitCard.jsx), [frontend/src/pages/SatelitDetaliuPage.jsx](frontend/src/pages/SatelitDetaliuPage.jsx), [frontend/src/pages/NotFoundPage.jsx](frontend/src/pages/NotFoundPage.jsx) | `querySelector` in the console |
+| S8-R7 | README Stage 8 section + AI log | [README.md](README.md), [ai-log/etapa-08.md](ai-log/etapa-08.md) | read |
+| S8-R8 | commit "Stage 8" pushed | [Commits](../../commits/main) | commit history |
+
+---

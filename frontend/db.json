@@ -10,9 +10,9 @@
       "viteza": 7.58,
       "inclinatie": 53.2,
       "misiune": "internet",
-      "model": "Starlink-V2 Bus",
+      "model": "Eurostar-3000",
       "operator": "SpaceX",
-      "locLansare": "Cape Canaveral SLC-40",
+      "locLansare": "Kennedy LC-39A",
       "anLansare": 2024,
       "decommission": 2031,
       "imagine": "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=120&auto=format&fit=crop&q=80"

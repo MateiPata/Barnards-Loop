@@ -1,23 +1,7 @@
 import { useState } from "react";
-
-const ETICHETE_ORBITA = {
-  leo: "LEO",
-  meo: "MEO",
-  geo: "GEO",
-  heo: "HEO",
-  sso: "SSO",
-};
-
-const ETICHETE_MISIUNE = {
-  internet: "Internet",
-  comunicatii: "Communications",
-  positioning: "Positioning",
-  observare: "Earth Imaging",
-  weather: "Weather",
-  stiintific: "Science",
-  iot: "IoT",
-  custom: "Custom",
-};
+import { Link } from "react-router-dom";
+import { ETICHETE_MISIUNE, ETICHETE_ORBITA } from "../constants.js";
+import styles from "./SatelitCard.module.css";
 
 export default function SatelitCard({
   satelit,
@@ -40,12 +24,13 @@ export default function SatelitCard({
   const esteMentenanta = Boolean(satelit.mentenanta);
 
   const cardClass = [
-    esteMentenanta ? "item-card done" : "item-card",
-    isSelected ? "selected-card" : "",
-    isCompared ? "compared-card" : "",
+    styles.card,
+    esteMentenanta ? styles.done : "",
+    isSelected ? styles.selected : "",
+    isCompared ? styles.compared : "",
   ]
-    .join(" ")
-    .trim();
+    .filter(Boolean)
+    .join(" ");
 
   const razaKm = 6371 + (Number(satelit.altitudine) || 550);
   const perioadaMin = (
@@ -60,32 +45,39 @@ export default function SatelitCard({
       data-id={satelit.id}
       onClick={() => onSelect && onSelect(satelit.id)}
     >
-      <div className="card-top-row">
-        <div className="card-left-group">
-          <label className="card-main" onClick={(e) => e.stopPropagation()}>
+      <div className={styles.topRow}>
+        <div className={styles.leftGroup}>
+          <div className={styles.main} onClick={(e) => e.stopPropagation()}>
             <input
               type="checkbox"
               checked={esteMentenanta}
               onChange={() => onToggle(satelit.id)}
+              aria-label={`Marchează ${satelit.nume}`}
               data-testid="item-toggle"
             />
             <img
               src={imagineUrl}
               alt={satelit.nume}
-              className="satellite-thumb"
+              className={styles.thumb}
             />
-            <div className="satellite-details">
-              <div className="satellite-title-row">
-                <h3 data-testid="item-title">{satelit.nume}</h3>
+            <div>
+              <div className={styles.titleRow}>
+                <Link
+                  to={`/sateliti/${satelit.id}`}
+                  className={styles.title}
+                  data-testid="item-link"
+                >
+                  {satelit.nume}
+                </Link>
                 <span className={`badge badge-${satelit.orbita}`}>
                   {ETICHETE_ORBITA[satelit.orbita] ||
                     satelit.orbita.toUpperCase()}
                 </span>
                 {satelit.model && (
-                  <span className="model-tag">{satelit.model}</span>
+                  <span className={styles.modelTag}>{satelit.model}</span>
                 )}
               </div>
-              <p className="satellite-meta">
+              <p className={styles.meta}>
                 NORAD #{satelit.norad} &middot; Tip:{" "}
                 <strong>
                   {ETICHETE_MISIUNE[satelit.misiune] || satelit.misiune}
@@ -94,12 +86,11 @@ export default function SatelitCard({
                 <strong>{satelit.operator || "SpaceX / ESA"}</strong>
               </p>
             </div>
-          </label>
+          </div>
 
-          {/* Butonul sageata pentru afisarea/ascunderea telemetriei */}
           <button
             type="button"
-            className={`btn-expand ${extins ? "open" : ""}`}
+            className={`${styles.btnExpand} ${extins ? styles.open : ""}`}
             onClick={(e) => {
               e.stopPropagation();
               setExtins((v) => !v);
@@ -122,14 +113,14 @@ export default function SatelitCard({
           </button>
         </div>
 
-        <div className="card-actions" onClick={(e) => e.stopPropagation()}>
+        <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
           <span
-            className={`status-pill ${
-              !esteMentenanta ? "status-online" : "status-maint"
+            className={`${styles.statusPill} ${
+              esteMentenanta ? styles.statusMaint : ""
             }`}
           >
-            <span className="status-dot" />
-            <span className="status">
+            <span className={styles.statusDot} />
+            <span className={styles.status}>
               {!esteMentenanta ? "Operațional" : "Mentenanță"}
             </span>
           </span>
@@ -170,32 +161,33 @@ export default function SatelitCard({
         </div>
       </div>
 
-      {/* Sectiunea colapsabila cu parametrii si telemetria satelitului */}
       {extins && (
-        <div className="telemetry-specs">
-          <div className="spec-box">
-            <span className="spec-label">Altitudine</span>
-            <span className="spec-value">{satelit.altitudine} km</span>
+        <div className={styles.telemetrySpecs}>
+          <div className={styles.specBox}>
+            <span className={styles.specLabel}>Altitudine</span>
+            <span className={styles.specValue}>{satelit.altitudine} km</span>
           </div>
-          <div className="spec-box">
-            <span className="spec-label">Viteză Orbitală</span>
-            <span className="spec-value">{satelit.viteza ?? 7.58} km/s</span>
+          <div className={styles.specBox}>
+            <span className={styles.specLabel}>Viteză Orbitală</span>
+            <span className={styles.specValue}>
+              {satelit.viteza ?? 7.58} km/s
+            </span>
           </div>
-          <div className="spec-box">
-            <span className="spec-label">Perioadă Orbită</span>
-            <span className="spec-value">{perioadaMin} min</span>
+          <div className={styles.specBox}>
+            <span className={styles.specLabel}>Perioadă Orbită</span>
+            <span className={styles.specValue}>{perioadaMin} min</span>
           </div>
-          <div className="spec-box">
-            <span className="spec-label">Loc Lansare</span>
-            <span className="spec-value">
+          <div className={styles.specBox}>
+            <span className={styles.specLabel}>Loc Lansare</span>
+            <span className={styles.specValue}>
               {satelit.locLansare || "Cape Canaveral"}
             </span>
           </div>
-          <div className="spec-box">
-            <span className="spec-label">Ciclu Viață (EOL)</span>
-            <span className="spec-value">
-              {satelit.anLansare || 2024} &rarr;{" "}
-              {satelit.decommission || 2031} ({satelit.inclinatie ?? 53.2}&deg;)
+          <div className={styles.specBox}>
+            <span className={styles.specLabel}>Ciclu Viață (EOL)</span>
+            <span className={styles.specValue}>
+              {satelit.anLansare || 2024} &rarr; {satelit.decommission || 2031}{" "}
+              ({satelit.inclinatie ?? 53.2}&deg;)
             </span>
           </div>
         </div>

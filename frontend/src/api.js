@@ -17,6 +17,10 @@ export function fetchSateliti() {
   return request("/sateliti");
 }
 
+export function fetchSatelit(id) {
+  return request(`/sateliti/${id}`);
+}
+
 export function createSatelit(satelit) {
   return request("/sateliti", {
     method: "POST",
